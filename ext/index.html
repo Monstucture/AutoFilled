@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ritz Auto Quote</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main>
+        <form id="quote-form">
+            <fieldset>
+                <legend>Personal Information</legend>
+                <div class="input-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name">
+                </div>
+                <div class="input-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name">
+                </div>
+                <div class="input-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="text" id="dob" name="dob">
+                </div>
+                <div class="input-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone">
+                </div>
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Address Information</legend>
+                <div class="input-group">
+                    <label for="address1">Address 1:</label>
+                    <input type="text" id="address1" name="address1">
+                </div>
+                <div class="input-group">
+                    <label for="address2">Address 2:</label>
+                    <input type="text" id="address2" name="address2">
+                </div>
+                <div class="input-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city">
+                </div>
+                <div class="input-group">
+                    <label for="zip">ZIP Code:</label>
+                    <input type="text" id="zip" name="zip">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Dwelling Information</legend>
+                <div class="input-group">
+                    <label for="dA">Field dA:</label>
+                    <input type="text" id="dA" name="dA">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="dB" name="dB" readonly hidden>
+                    <input type="text" id="dC" name="dC" readonly hidden>
+                    <input type="text" id="dD" name="dD" readonly hidden>
+                    <input type="text" id="dE" name="dE" readonly hidden>
+                    <input type="text" id="dF" name="dF" readonly hidden>
+                    <input type="text" id="aop" name="aop" readonly hidden>
+                    <input type="text" id="wh" name="wh" readonly hidden>
+                </div>
+
+                <!-- House info -->
+                <div class="input-group">
+                    <label for="year_built">Year Built:</label>
+                    <input type="text" id="year_built" name="year_built">
+                </div>
+                <div class="input-group">
+                    <label for="sqft">SQFT:</label>
+                    <input type="text" id="sqft" name="sqft">
+                </div>
+                <div class="input-group">
+                    <label for="st">Stories: 0 - 1 | 1 - 2</label>
+                    <input type="text" id="st" name="st">
+                </div>
+                <div class="input-group">
+                    <label for="roof_year">Roof Year:</label>
+                    <input type="text" id="roof_year" name="roof_year">
+                </div>
+                <div class="input-group">
+                    <label for="water_year">Water Year:</label>
+                    <input type="text" id="water_year" name="water_year">
+                </div>
+                <div class="input-group">   
+                    <label for="roof_shape">Roof Shape: 0 - Gable |  7 - Hip</label>
+                    <input type="text" id="roof_shape" name="roof_shape">
+                </div>
+                <div class="input-group">
+                    <label for="roof_mat">Roof Mat: 1 - Archi | 0 - Comp</label>
+                    <input type="text" id="roof_mat" name="roof_mat">
+                </div>
+                <div class="input-group">
+                    <label for="purchase_date">Purchase Date:</label>
+                    <input type="text" id="purchase_date" name="purchase_date">
+                </div>
+                <div class="input-group">
+                    <label for="const_material">Const Mat: 0 - Frame | 1 - Brick</label>
+                    <input type="text" id="const_material" name="const_material">
+                </div>
+                <div class="input-group">
+                    <label for="mat">Ex Mat: 2 - Brick | 9 - Vinyl</label>
+                    <input type="text" id="mat" name="mat">
+                </div>
+                
+                <!-- Hard code stuff -->
+                <div class="input-group">
+                    <input type="text" id="foundation" name="foundation" readonly hidden>
+                    <input type="text" id="payplan" name="payplan" readonly hidden>
+                    <input type="text" id="payor" name="payor" readonly hidden>
+                    <input type="text" id="housesize" name="housesize" readonly hidden>
+                    <input type="text" id="personal_statues" name="personal_statues" readonly hidden>
+                    <input type="text" id="Inspermission" name="Inspermission" readonly hidden>
+                    <input type="text" id="Ins_score" name="Ins_score" readonly hidden>
+                    <input type="text" id="heater_location" name="heater_location" readonly hidden>
+                    <input type="text" id="resident_type" name="resident_type" readonly hidden>
+                    <input type="text" id="usage" name="usage" readonly hidden>
+                    <input type="text" id="option1" name="option1" readonly hidden>
+                    <input type="text" id="option2" name="option2" readonly hidden>
+                    <input type="text" id="waterCov" name="waterCov" readonly hidden>
+                </div>
+            </fieldset>
+
+            <div class="button-group">
+                <button type="button" id="autofill">Autofill</button>
+                <button type="button" id="reset-fields">Reset</button>
+                <button type="button" id="save">Save</button>
+                <button type="button" id="load">Load</button>
+            </div>
+        </form>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

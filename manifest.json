@@ -1,0 +1,20 @@
+{
+    "name": "Ritz Auto Quote",
+    "version": "1.7",
+    "description": "A Chrome extension for auto-filling allied trust quote forms",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "welcome/background.js"
+    },
+    "action": {
+        "default_popup": "ext/index.html"
+    },
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["content.js"]
+        }
+    ],
+    "permissions": ["storage", "activeTab"],
+    "host_permissions": ["<all_urls>"]
+}
