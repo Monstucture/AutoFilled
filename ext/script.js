@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		roof_shape: document.getElementById('roof_shape'),
 		roof_mat: document.getElementById('roof_mat'),
 		roof_year: document.getElementById('roof_year'),
+        water_year: document.getElementById('roof_year'),
 
 		payplan: document.getElementById('payplan'),
 		payor: document.getElementById('payor'),
@@ -46,38 +47,49 @@ document.addEventListener('DOMContentLoaded', function() {
 		heater_location: document.getElementById('heater_location'),
 		resident_type: document.getElementById('resident_type'),
 		usage: document.getElementById('usage'),
-		water_year: document.getElementById('water_year'),
 		option1: document.getElementById('option1'),
 		option2: document.getElementById('option2'),
 		waterCov: document.getElementById('waterCov'),
+
+        siteSelection: document.getElementById('site-selection'),
     };
 
-    const fixedValues = {
-        dB: '2',
-        dC: '0',
-        dD: '0',
-        dE: '1',
-        dF: '2',
 
-		aop: '8',
-		wh: '4',
-
-		foundation: '2',
-
-		payplan: '0',
-		payor: '0',
-		housesize: '2',
-		personal_statues: '1',
-		Inspermission: '1',
-		Ins_score: '10',
-		heater_location: '1',
-		resident_type: '0',
-		usage: '0',
-		
-		option1: '0',
-		option2: '0',
-		waterCov: '1',
+    const siteConfigurations = {
+        allied: {
+            dB: '2',
+            dC: '0',
+            dD: '0',
+            dE: '1',
+            dF: '2',
+            aop: '8',
+            wh: '4',
+            foundation: '2',
+            payplan: '0',
+            payor: '0',
+            housesize: '2',
+            personal_statues: '1',
+            Inspermission: '1',
+            Ins_score: '10',
+            heater_location: '1',
+            resident_type: '0',
+            usage: '0',
+            option1: '0',
+            option2: '0',
+            waterCov: '1',
+        },
+        ari: {
+            dB: "40",
+            dC: "300000",
+            dD: "5000",
+            foundation: "SLAB",
+            roof_mat: "COMP",
+            resident_type: "Dwelling",
+            waterCov: '5000',
+        }
     };
+
+    let currentSite = 'allied';
 
     if (!validateElements(elements)) return;
 
@@ -95,8 +107,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initializeFixedValues() {
-        for (let key in fixedValues) {
-            elements[key].value = fixedValues[key];
+        const config = siteConfigurations[currentSite];
+        for (let key in config) {
+            if (elements[key]) {
+                elements[key].value = config[key];
+            }
         }
     }
 
@@ -105,23 +120,47 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.resetFields.addEventListener("click", handleReset);
         elements.save.addEventListener("click", handleSave);
         elements.load.addEventListener("click", handleLoad);
+        elements.siteSelection.addEventListener('change', handleSiteChange);
+    }
+
+    function handleSiteChange(event) {
+        currentSite = event.target.value;
+        initializeFixedValues();
     }
 
     function handleAutofill() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			const formData = getFormData();
-			console.log("Sending form data:", formData);
-			chrome.tabs.sendMessage(tabs[0].id, formData, function(response) {
-				if (chrome.runtime.lastError) {
-					console.error('Error in autofill:', chrome.runtime.lastError);
-				} else if (response && response.status === "Success") {
-					console.log("Autofill successful");
-				} else {
-					console.error('Error in autofill:', response);
-				}
-			});
-		});
-	}
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            if (chrome.runtime.lastError) {
+                console.error('Error querying tabs:', chrome.runtime.lastError);
+                return;
+            }
+
+            if (tabs.length === 0) {
+                console.error('No active tab found');
+                return;
+            }
+
+            const formData = getFormData();
+            formData.site = currentSite; // Add the current site to the form data
+            console.log("Sending form data:", formData);
+
+            chrome.tabs.sendMessage(tabs[0].id, formData, function(response) {
+                if (chrome.runtime.lastError) {
+                    console.error('Error in sendMessage:', chrome.runtime.lastError);
+                    alert('Error: ' + chrome.runtime.lastError.message);
+                } else if (!response) {
+                    console.error('No response received from content script');
+                    alert('Error: No response from content script');
+                } else if (response.status === "Success") {
+                    console.log("Autofill successful");
+                    alert('Autofill successful!');
+                } else {
+                    console.error('Error in autofill:', response);
+                    alert('Error: ' + (response.message || 'Unknown error occurred'));
+                }
+            });
+        });
+    }
 	
 
     function handleReset() {
@@ -163,13 +202,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getFormData() {
-		const formData = {};
-		for (let key in elements) {
-			if (elements[key].value !== undefined) {
-				formData[key] = elements[key].value;
-				console.log(`${key}: ${formData[key]}`);
-			}
-		}
-		return {...formData, ...fixedValues};
-	}
+        const formData = {};
+        for (let key in elements) {
+            if (elements[key].value !== undefined) {
+                formData[key] = elements[key].value;
+            }
+        }
+        return {...formData, ...siteConfigurations[currentSite]};
+    }
 });

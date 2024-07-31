@@ -1,6 +1,6 @@
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    try {
-        const elementMappings = {
+const siteConfigurations = {
+    'alliedtrustagents.com': {
+        elementMappings: {
             // Customer info
             first_name: "ContentPlaceHolderBody_ApplicantPropertyLoc1_txtInsFirstName",
             last_name: "ContentPlaceHolderBody_ApplicantPropertyLoc1_txtInsLastName",
@@ -51,38 +51,106 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             option2: "ContentPlaceHolderBody_QuoteBody_ddlAnyBreakdownCvg",
             waterCov: "ContentPlaceHolderBody_QuoteBody_HasPlumbingLeakageCoverage",
 
-        };
+        }
+    },
+    
+    'isi.americanriskins.com': {
+        elementMappings: {
+           // Customer info
+           first_name: "ApplicantFirstzzzz1",
+           last_name: "ApplicantLastzzzz1",
+           dob: "ApplicantBirthDatezzzz1",
+           phone: "ApplicantHomePhonezzzz1",
+           email: "ApplicantEMailzzzz1",
+           address1: "ApplicantAddress1_1",
+           address2: "ApplicantAddress2_1",
+           city: "ApplicantCity_1",
+           zip: "ApplicantZip_1",
 
+           // Hard code Value
+           dA: "DwellingLimit_1",
+           dB: "AddlContentsLimit_1",
+           dC: "PersonalLiabilityLimit_1",
+           dD: "MedicalLimit_1",
+    
+           // House info
+           year_built: "ConstructionYear_1",
+           purchase_date: "PurchaseDate_1",
+           const_material: "ConstructionType_1",
+           sqft: "SquareFootage_1",
+           st: "NumberStories_1", 
+           
+           // Hard code for ARI
+           foundation: "Foundation_1",
+           roof_mat: "RoofCovering_1",
+           roof_year: "RoofConstructionYear_1",
+
+           // Unique to ARI
+           resident_type: "DwellingType_1", 
+           waterCov: "WaterDamageLimit_1",
+
+        }
+    }
+    // Add more site configurations as needed
+};
+
+function getCurrentDomain() {
+    return window.location.hostname;
+}
+
+function getElementMappings(site) {
+    const currentDomain = getCurrentDomain();
+    console.log("Current domain:", currentDomain); // Debugging line
+    
+    for (const [domain, config] of Object.entries(siteConfigurations)) {
+        if (currentDomain.includes(domain)) {
+            console.log("Matched configuration for domain:", domain); // Debugging line
+            return config.elementMappings;
+        }
+    }
+    console.warn("No configuration found for current domain:", currentDomain);
+    return null;
+}
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    try {
+        console.log("Received request:", request);
+        const elementMappings = getElementMappings(request.site);
+        if (!elementMappings) {
+            console.error("No configuration found for site:", request.site);
+            sendResponse({status: "Error", message: "No configuration for this site"});
+            return true;
+        }
+
+        let filledFields = 0;
         for (const [key, elementId] of Object.entries(elementMappings)) {
-            const element = document.getElementById(elementId);
+            const element = document.getElementById(elementId) || document.querySelector(`#${elementId}`);
             if (element && request[key] !== undefined) {
                 if (element.tagName === 'SELECT') {
-                    // Check if the option exists before setting the value
-                    if (Array.from(element.options).some(option => option.value === request[key])) {
+                    const option = Array.from(element.options).find(option => option.value === request[key]);
+                    if (option) {
                         element.value = request[key];
-                        // Trigger change event for select elements
                         element.dispatchEvent(new Event('change', { bubbles: true }));
+                        filledFields++;
                     } else {
                         console.warn(`Option with value "${request[key]}" not found in select element "${elementId}"`);
                     }
                 } else {
                     element.value = request[key];
-                    // Trigger input event for other elements
                     element.dispatchEvent(new Event('input', { bubbles: true }));
+                    filledFields++;
                 }
+            } else if (!element) {
+                console.warn(`Element not found: ${elementId}`);
             }
         }
 
-        // Add a small delay before sending the response
-        setTimeout(() => {
-            sendResponse({status: "Success"});
-        }, 100);
-
+        console.log(`Filled ${filledFields} fields`);
+        sendResponse({status: "Success", message: `Filled ${filledFields} fields`});
     } catch (error) {
         console.error("Error in content script:", error);
-        sendResponse({status: "Exception occurred", error: error.message});
+        sendResponse({status: "Error", message: error.message});
     }
     
-    // Return true to indicate that the response will be sent asynchronously
     return true;
 });
