@@ -1,6 +1,6 @@
 {
     "name": "Ritz Auto Quote",
-    "version": "1.56",
+    "version": "1.63",
     "description": "A Chrome extension for auto-filling quote forms on multiple websites",
     "manifest_version": 3,
     "background": {

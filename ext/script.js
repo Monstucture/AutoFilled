@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         city: document.getElementById('city'),
         zip: document.getElementById('zip'),
         dA: document.getElementById('dA'),
+        ddA: document.getElementById('dA'),
         dB: document.getElementById('dB'),
         dC: document.getElementById('dC'),
         dD: document.getElementById('dD'),
@@ -45,6 +46,16 @@ document.addEventListener('DOMContentLoaded', function() {
         option1: document.getElementById('option1'),
         option2: document.getElementById('option2'),
         waterCov: document.getElementById('waterCov'),
+
+        Laps: document.getElementById('Laps'),
+        Co_app: document.getElementById('Co_app'),
+        PriorCarrier: document.getElementById('PriorCarrier'),
+        c1: document.getElementById('c1'),
+        x1: document.getElementById('x1'),
+        x2: document.getElementById('x2'),
+        x3: document.getElementById('x3'),
+        x4: document.getElementById('x4'),
+
         siteSelection: document.getElementById('site-selection'),
     };
 
@@ -90,6 +101,22 @@ document.addEventListener('DOMContentLoaded', function() {
         sagesure: {
             Ins_score: 'Average',
             Laps: 'None',
+            Co_app: '200',
+            PriorCarrier: 'Other',
+    
+            c1: '0 - 9%',
+            x1: '200',
+            x2: '200',
+            x3: '200',
+            x4: '200',
+            
+
+            personal_statues: 'Single',
+
+            const_material: [
+                { value: 'Masonry Veneer', label:'Masonry Veneer' },
+                { value: 'Frame', label:'Frame' }
+            ],
             roof_mat: [
                 { value: 'Architectural Shingles', label: 'Architectural Shingles' },
                 { value: 'Asphalt/Composite Shingles', label: 'Asphalt/Composite Shingles' }
