@@ -1,6 +1,6 @@
 {
     "name": "Ritz Auto Quote",
-    "version": "1.15",
+    "version": "1.56",
     "description": "A Chrome extension for auto-filling quote forms on multiple websites",
     "manifest_version": 3,
     "background": {
@@ -13,6 +13,7 @@
         {
           "matches": [
             "*://www.alliedtrustagents.com/*",
+            "*://agents.sagesure.com/*",
             "*://isi.americanriskins.com/*"
           ],
           "js": ["content.js"]
@@ -21,6 +22,7 @@
     "permissions": ["storage", "activeTab"],
     "host_permissions": [
         "*://www.alliedtrustagents.com/*",
+        "*://agents.sagesure.com/*",
         "*://isi.americanriskins.com/*"
     ]
 }

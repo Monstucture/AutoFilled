@@ -11,8 +11,9 @@
     <div class="input-group">
         <label for="site-selection">Select Site:</label>
         <select id="site-selection">
-            <option value="allied">Allied Trust Agents</option>
-            <option value="ari">American Risk Insurance</option>
+            <option value="allied">Allied</option>
+            <option value="sagesure">Sagesure</option>
+            <option value="ari">ARI</option>
         </select>
     </div>
         
@@ -88,36 +89,51 @@
                     <input type="text" id="sqft" name="sqft">
                 </div>
                 <div class="input-group">
-                    <label for="st">Stories: 0 - 1 | 1 - 2</label>
-                    <input type="text" id="st" name="st">
+                    <label for="st">Stories:</label>
+                    <select id="st" name="st">
+                        <option value="">Stories</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="roof_year">Roof Year:</label>
                     <input type="text" id="roof_year" name="roof_year">
                 </div>
                 <div class="input-group">
-                    <label for="water_year">Water Year:</label>
-                    <input type="text" id="water_year" name="water_year">
-                </div>
-                <div class="input-group">   
-                    <label for="roof_shape">Roof Shape: 0 - Gable |  7 - Hip</label>
-                    <input type="text" id="roof_shape" name="roof_shape">
+                    <input type="text" id="water_year" name="water_year" hidden>
                 </div>
                 <div class="input-group">
-                    <label for="roof_mat">Roof Mat: 1 - Archi | 0 - Comp</label>
-                    <input type="text" id="roof_mat" name="roof_mat">
+                    <label for="roof_shape">Roof Shape:</label>
+                    <select id="roof_shape" name="roof_shape">
+                        <option value="">Roof Shape</option>
+                        <!-- Options will be dynamically populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="roof_mat">Roof Material:</label>
+                    <select id="roof_mat" name="roof_mat">
+                      <option value="">Select Roof Material</option>
+                      <!-- Options will be dynamically populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="const_material">Construction Material:</label>
+                    <select id="const_material" name="const_material">
+                        <option value="">Select Construction Material</option>
+                        <!-- Options will be dynamically populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="mat">Exterior Material:</label>
+                    <select id="mat" name="mat">
+                        <option value="">Select Exterior Material</option>
+                        <!-- Options will be dynamically populated by JavaScript -->
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="purchase_date">Purchase Date:</label>
                     <input type="text" id="purchase_date" name="purchase_date">
-                </div>
-                <div class="input-group">
-                    <label for="const_material">Const Mat: 0 - Frame | 1 - Brick</label>
-                    <input type="text" id="const_material" name="const_material">
-                </div>
-                <div class="input-group">
-                    <label for="mat">Ex Mat: 2 - Brick | 9 - Vinyl</label>
-                    <input type="text" id="mat" name="mat">
                 </div>
                 
                 <!-- Hard code stuff -->
@@ -129,6 +145,7 @@
                     <input type="text" id="personal_statues" name="personal_statues" readonly hidden>
                     <input type="text" id="Inspermission" name="Inspermission" readonly hidden>
                     <input type="text" id="Ins_score" name="Ins_score" readonly hidden>
+                    <input type="text" id="Laps" name="Laps" readonly hidden>
                     <input type="text" id="heater_location" name="heater_location" readonly hidden>
                     <input type="text" id="resident_type" name="resident_type" readonly hidden>
                     <input type="text" id="usage" name="usage" readonly hidden>

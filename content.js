@@ -28,7 +28,7 @@ const siteConfigurations = {
             const_material: "ContentPlaceHolderBody_QuoteBody_ddlConstructionTypeCd",
             foundation: "ContentPlaceHolderBody_QuoteBody_ddlFoundationType",
             sqft: "ContentPlaceHolderBody_QuoteBody_txtTotalAreaSqFt",
-            st: "ContentPlaceHolderBody_QuoteBody_ddlNbrFloorsCd", 
+            st: "ContentPlaceHolderBody_QuoteBody_ddlNbrFloorsCd",
             mat: "ContentPlaceHolderBody_QuoteBody_ddlSidingType",
             roof_shape: "ContentPlaceHolderBody_QuoteBody_ddlRoofShapeCd",
             roof_mat: "ContentPlaceHolderBody_QuoteBody_ddlRoofType",
@@ -50,107 +50,171 @@ const siteConfigurations = {
             option1: "ContentPlaceHolderBody_QuoteBody_ddlAnyPersonalPropertyReplacementCvg",
             option2: "ContentPlaceHolderBody_QuoteBody_ddlAnyBreakdownCvg",
             waterCov: "ContentPlaceHolderBody_QuoteBody_HasPlumbingLeakageCoverage",
-
-        }
+        },
+        
     },
-    
-    'isi.americanriskins.com': {
+
+    'agents.sagesure.com': {
         elementMappings: {
-           // Customer info
-           first_name: "ApplicantFirstzzzz1",
-           last_name: "ApplicantLastzzzz1",
-           dob: "ApplicantBirthDatezzzz1",
-           phone: "ApplicantHomePhonezzzz1",
-           email: "ApplicantEMailzzzz1",
-           address1: "ApplicantAddress1_1",
-           address2: "ApplicantAddress2_1",
-           city: "ApplicantCity_1",
-           zip: "ApplicantZip_1",
+            // Customer info
+            first_name: "InsuredFirstName",
+            last_name: "InsuredLastName",
 
-           // Hard code Value
-           dA: "DwellingLimit_1",
-           dB: "AddlContentsLimit_1",
-           dC: "PersonalLiabilityLimit_1",
-           dD: "MedicalLimit_1",
-    
-           // House info
-           year_built: "ConstructionYear_1",
-           purchase_date: "PurchaseDate_1",
-           const_material: "ConstructionType_1",
-           sqft: "SquareFootage_1",
-           st: "NumberStories_1", 
-           
-           // Hard code for ARI
-           foundation: "Foundation_1",
-           roof_mat: "RoofCovering_1",
-           roof_year: "RoofConstructionYear_1",
+            // Hard code Value
+            dA: "CoverageA",
 
-           // Unique to ARI
-           resident_type: "DwellingType_1", 
-           waterCov: "WaterDamageLimit_1",
+            // React Select fields
+            year_built: "ConstructionYear",
+            roof_mat: "RoofCoveringType",
+            roof_year: "ConstructionYearRoof",
 
-        }
+            // Unique on Sagesure
+            Ins_score: "InsuranceScoreRangeEstimate",
+            Laps: "LapseInCoverage"
+
+        },
+        
     }
-    // Add more site configurations as needed
 };
 
+// Get the current domain of the page
 function getCurrentDomain() {
     return window.location.hostname;
 }
 
+// Get element mappings for the current site
 function getElementMappings(site) {
     const currentDomain = getCurrentDomain();
-    console.log("Current domain:", currentDomain); // Debugging line
-    
+
     for (const [domain, config] of Object.entries(siteConfigurations)) {
         if (currentDomain.includes(domain)) {
-            console.log("Matched configuration for domain:", domain); // Debugging line
             return config.elementMappings;
         }
     }
-    console.warn("No configuration found for current domain:", currentDomain);
     return null;
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+// Fill a React Select field
+function fillReactSelect(containerId, value) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        return false;
+    }
+
+    const hiddenInput = container.querySelector('input[type="hidden"]');
+    const visibleInput = container.querySelector('input[type="text"]');
+
+    if (!hiddenInput || !visibleInput) {
+        return false;
+    }
+
+    // Update hidden and visible inputs
+    hiddenInput.value = value;
+    hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+    visibleInput.value = value;
+    visibleInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+    // Update displayed value
+    const displayedValue = container.querySelector('.uit-react-select__single-value');
+    if (displayedValue) {
+        displayedValue.textContent = value;
+    }
+
+    return true;
+}
+
+// Find an element by ID, name, or React Select container
+function findElement(elementId) {
+    let element = document.getElementById(elementId) || document.getElementsByName(elementId)[0];
+    
+    if (element) {
+        return element;
+    }
+
+    // Check for React Select container
+    const reactSelectContainer = document.getElementById(`${elementId}-container`);
+    if (reactSelectContainer) {
+        return { isReactSelect: true, containerId: `${elementId}-container` };
+    }
+
+    return null;
+}
+
+// Fill a field with the provided value
+function fillField(element, value, site, key) {
+    console.log(`Attempting to fill ${key} with value: ${value}`);
+    
+    const siteConfig = siteConfigurations[site];
+    if (siteConfig && siteConfig.valueMappings) {
+        const mappings = siteConfig.valueMappings[key];
+        if (mappings) {
+            value = mappings[value] || value;
+        }
+    }
+
+    if (element.isReactSelect) {
+        return fillReactSelect(element.containerId, value);
+    }
+
+    if (element.tagName === 'SELECT') {
+        const option = Array.from(element.options).find(option =>
+            option.value.toLowerCase() === value.toLowerCase() ||
+            option.textContent.toLowerCase() === value.toLowerCase()
+        );
+        if (option) {
+            element.value = option.value;
+            element.dispatchEvent(new Event('change', { bubbles: true }));
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        element.value = value;
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+        console.log(`Field ${key} filled with: ${value}`);
+        return true;
+    }
+}
+
+
+// Listen for messages from the popup
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     try {
-        console.log("Received request:", request);
-        const elementMappings = getElementMappings(request.site);
+        const site = request.site;
+        const elementMappings = getElementMappings(site);
         if (!elementMappings) {
-            console.error("No configuration found for site:", request.site);
-            sendResponse({status: "Error", message: "No configuration for this site"});
+            sendResponse({ status: "Error", message: "No configuration for this site" });
             return true;
         }
 
+        console.log("Received data:", request);
+
         let filledFields = 0;
+        let notFoundElements = [];
+
         for (const [key, elementId] of Object.entries(elementMappings)) {
-            const element = document.getElementById(elementId) || document.querySelector(`#${elementId}`);
+            const element = findElement(elementId);
+
             if (element && request[key] !== undefined) {
-                if (element.tagName === 'SELECT') {
-                    const option = Array.from(element.options).find(option => option.value === request[key]);
-                    if (option) {
-                        element.value = request[key];
-                        element.dispatchEvent(new Event('change', { bubbles: true }));
-                        filledFields++;
-                    } else {
-                        console.warn(`Option with value "${request[key]}" not found in select element "${elementId}"`);
-                    }
-                } else {
-                    element.value = request[key];
-                    element.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log(`Processing ${key}: ${request[key]}`);
+                if (fillField(element, request[key], site, key)) {
                     filledFields++;
                 }
             } else if (!element) {
-                console.warn(`Element not found: ${elementId}`);
+                console.log(`Element not found: ${elementId}`);
+                notFoundElements.push(elementId);
             }
         }
 
-        console.log(`Filled ${filledFields} fields`);
-        sendResponse({status: "Success", message: `Filled ${filledFields} fields`});
+        sendResponse({
+            status: "Success",
+            message: `Filled ${filledFields} fields. ${notFoundElements.length} elements not found.`,
+            notFoundElements: notFoundElements
+        });
     } catch (error) {
         console.error("Error in content script:", error);
-        sendResponse({status: "Error", message: error.message});
+        sendResponse({ status: "Error", message: error.message });
     }
-    
+
     return true;
 });

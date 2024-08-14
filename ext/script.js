@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resetFields: document.getElementById("reset-fields"),
         save: document.getElementById("save"),
         load: document.getElementById("load"),
+
         first_name: document.getElementById('first_name'),
         last_name: document.getElementById('last_name'),
         dob: document.getElementById('dob'),
@@ -14,46 +15,38 @@ document.addEventListener('DOMContentLoaded', function() {
         city: document.getElementById('city'),
         zip: document.getElementById('zip'),
         dA: document.getElementById('dA'),
-
         dB: document.getElementById('dB'),
         dC: document.getElementById('dC'),
         dD: document.getElementById('dD'),
         dE: document.getElementById('dE'),
         dF: document.getElementById('dF'),
-
-		aop: document.getElementById('aop'),
-		wh: document.getElementById('wh'),
-
-		year_built: document.getElementById('year_built'),
-		purchase_date: document.getElementById('purchase_date'),
-		const_material: document.getElementById('const_material'),
-
-		foundation: document.getElementById('foundation'),
-
-		sqft: document.getElementById('sqft'),
-		st: document.getElementById('st'),
-		mat: document.getElementById('mat'),
-		roof_shape: document.getElementById('roof_shape'),
-		roof_mat: document.getElementById('roof_mat'),
-		roof_year: document.getElementById('roof_year'),
+        aop: document.getElementById('aop'),
+        wh: document.getElementById('wh'),
+        year_built: document.getElementById('year_built'),
+        purchase_date: document.getElementById('purchase_date'),
+        const_material: document.getElementById('const_material'),
+        foundation: document.getElementById('foundation'),
+        sqft: document.getElementById('sqft'),
+        st: document.getElementById('st'),
+        mat: document.getElementById('mat'),
+        roof_shape: document.getElementById('roof_shape'),
+        roof_mat: document.getElementById('roof_mat'),
+        roof_year: document.getElementById('roof_year'),
         water_year: document.getElementById('roof_year'),
-
-		payplan: document.getElementById('payplan'),
-		payor: document.getElementById('payor'),
-		housesize: document.getElementById('housesize'),
-		personal_statues: document.getElementById('personal_statues'),
-		Inspermission: document.getElementById('Inspermission'),
-		Ins_score: document.getElementById('Ins_score'),
-		heater_location: document.getElementById('heater_location'),
-		resident_type: document.getElementById('resident_type'),
-		usage: document.getElementById('usage'),
-		option1: document.getElementById('option1'),
-		option2: document.getElementById('option2'),
-		waterCov: document.getElementById('waterCov'),
-
+        payplan: document.getElementById('payplan'),
+        payor: document.getElementById('payor'),
+        housesize: document.getElementById('housesize'),
+        personal_statues: document.getElementById('personal_statues'),
+        Inspermission: document.getElementById('Inspermission'),
+        Ins_score: document.getElementById('Ins_score'),
+        heater_location: document.getElementById('heater_location'),
+        resident_type: document.getElementById('resident_type'),
+        usage: document.getElementById('usage'),
+        option1: document.getElementById('option1'),
+        option2: document.getElementById('option2'),
+        waterCov: document.getElementById('waterCov'),
         siteSelection: document.getElementById('site-selection'),
     };
-
 
     const siteConfigurations = {
         allied: {
@@ -77,16 +70,31 @@ document.addEventListener('DOMContentLoaded', function() {
             option1: '0',
             option2: '0',
             waterCov: '1',
+            roof_mat: [
+                { value: '1', label: 'Architectural Shingles' },
+                { value: '0', label: 'Asphalt/Composite Shingles' }
+            ],
+            roof_shape: [
+                { value: '0', label:'Gable' },
+                { value: '7', label:'Hip' }
+            ],
+            const_material: [
+                { value: '1', label:'Brick' },
+                { value: '0', label:'Frame' }
+            ],
+            mat: [
+                { value: '2', label:'Brick' },
+                { value: '9', label:'Vinyl' }
+            ]
         },
-        ari: {
-            dB: "40",
-            dC: "300000",
-            dD: "5000",
-            foundation: "SLAB",
-            roof_mat: "COMP",
-            resident_type: "Dwelling",
-            waterCov: '5000',
-        }
+        sagesure: {
+            Ins_score: 'Average',
+            Laps: 'None',
+            roof_mat: [
+                { value: 'Architectural Shingles', label: 'Architectural Shingles' },
+                { value: 'Asphalt/Composite Shingles', label: 'Asphalt/Composite Shingles' }
+            ],
+        },
     };
 
     let currentSite = 'allied';
@@ -95,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     initializeFixedValues();
     setupEventListeners();
+    updateSelectOptions(['roof_mat', 'roof_shape', 'const_material', 'mat']);
 
     function validateElements(elements) {
         for (let key in elements) {
@@ -109,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeFixedValues() {
         const config = siteConfigurations[currentSite];
         for (let key in config) {
-            if (elements[key]) {
+            if (elements[key] && typeof config[key] !== 'object') {
                 elements[key].value = config[key];
             }
         }
@@ -126,7 +135,36 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSiteChange(event) {
         currentSite = event.target.value;
         initializeFixedValues();
+        updateSelectOptions(['roof_mat', 'roof_shape']);
     }
+
+    function updateSelectOptions(selectIds) {
+        selectIds.forEach(selectId => {
+            const selectElement = elements[selectId];
+            if (!selectElement) {
+                console.error(`Select element ${selectId} not found`);
+                return;
+            }
+
+            const currentOptions = siteConfigurations[currentSite][selectId];
+            if (!currentOptions) {
+                console.error(`No options found for ${selectId} in current site configuration`);
+                return;
+            }
+
+            // Clear existing options
+            selectElement.innerHTML = '';
+
+            // Add new options
+            for (const option of currentOptions) {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.label;
+                selectElement.appendChild(optionElement);
+            }
+        });
+    }
+
 
     function handleAutofill() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -141,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const formData = getFormData();
-            formData.site = currentSite; // Add the current site to the form data
             console.log("Sending form data:", formData);
 
             chrome.tabs.sendMessage(tabs[0].id, formData, function(response) {
@@ -161,15 +198,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-	
 
     function handleReset() {
         for (let key in elements) {
-            if (elements[key].value !== undefined && !fixedValues.hasOwnProperty(key)) {
+            if (elements[key].value !== undefined && !siteConfigurations[currentSite].hasOwnProperty(key)) {
                 elements[key].value = '';
             }
         }
         initializeFixedValues();
+        updateSelectOptions(['roof_mat', 'roof_shape']);
     }
 
     function handleSave() {
@@ -195,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 initializeFixedValues();
+                updateSelectOptions(['roof_mat', 'roof_shape']);
                 console.log("Data loaded successfully!");
                 alert("Data loaded successfully!");
             }
@@ -204,10 +242,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function getFormData() {
         const formData = {};
         for (let key in elements) {
-            if (elements[key].value !== undefined) {
-                formData[key] = elements[key].value;
+            if (elements[key] && elements[key].value !== undefined) {
+                formData[key] = elements[key].value.trim();
             }
         }
-        return {...formData, ...siteConfigurations[currentSite]};
+        console.log("Form data being sent:", formData);
+        return {...formData, site: currentSite};
     }
 });
