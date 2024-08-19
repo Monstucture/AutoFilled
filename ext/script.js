@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const elements = {
         autofill: document.getElementById("autofill"),
         resetFields: document.getElementById("reset-fields"),
@@ -50,11 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
         Laps: document.getElementById('Laps'),
         Co_app: document.getElementById('Co_app'),
         PriorCarrier: document.getElementById('PriorCarrier'),
-        c1: document.getElementById('c1'),
+
         x1: document.getElementById('x1'),
         x2: document.getElementById('x2'),
         x3: document.getElementById('x3'),
         x4: document.getElementById('x4'),
+        c1: document.getElementById('c1'),
 
         siteSelection: document.getElementById('site-selection'),
     };
@@ -86,42 +87,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 { value: '0', label: 'Asphalt/Composite Shingles' }
             ],
             roof_shape: [
-                { value: '0', label:'Gable' },
-                { value: '7', label:'Hip' }
+                { value: '0', label: 'Gable' },
+                { value: '7', label: 'Hip' }
             ],
             const_material: [
-                { value: '1', label:'Brick' },
-                { value: '0', label:'Frame' }
+                { value: '1', label: 'Brick' },
+                { value: '0', label: 'Frame' }
             ],
             mat: [
-                { value: '2', label:'Brick' },
-                { value: '9', label:'Vinyl' }
+                { value: '2', label: 'Brick' },
+                { value: '9', label: 'Vinyl' }
             ]
         },
+
+        // TODO fix variable
         sagesure: {
             Ins_score: 'Average',
             Laps: 'None',
             Co_app: '200',
             PriorCarrier: 'Other',
-    
-            c1: '0 - 9%',
+
             x1: '200',
             x2: '200',
             x3: '200',
             x4: '200',
-            
+            c1: '0 - 9%',
 
             personal_statues: 'Single',
 
-            const_material: [
-                { value: 'Masonry Veneer', label:'Masonry Veneer' },
-                { value: 'Frame', label:'Frame' }
-            ],
             roof_mat: [
                 { value: 'Architectural Shingles', label: 'Architectural Shingles' },
                 { value: 'Asphalt/Composite Shingles', label: 'Asphalt/Composite Shingles' }
             ],
-        },
+            const_material: [
+                { value: 'Masonry Veneer', label: 'Masonry Veneer' },
+                { value: 'Frame', label: 'Frame' }
+            ],
+            mat: [
+                { value: 'Brick Veneer', label: 'Brick' },
+                { value: 'Vinyl', label: 'Vinyl' }
+            ]
+        }
+
     };
 
     let currentSite = 'allied';
@@ -162,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSiteChange(event) {
         currentSite = event.target.value;
         initializeFixedValues();
-        updateSelectOptions(['roof_mat', 'roof_shape']);
+        updateSelectOptions(['roof_mat', 'roof_shape', 'const_material', 'mat']);
     }
 
     function updateSelectOptions(selectIds) {
@@ -194,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function handleAutofill() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             if (chrome.runtime.lastError) {
                 console.error('Error querying tabs:', chrome.runtime.lastError);
                 return;
@@ -208,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = getFormData();
             console.log("Sending form data:", formData);
 
-            chrome.tabs.sendMessage(tabs[0].id, formData, function(response) {
+            chrome.tabs.sendMessage(tabs[0].id, formData, function (response) {
                 if (chrome.runtime.lastError) {
                     console.error('Error in sendMessage:', chrome.runtime.lastError);
                     alert('Error: ' + chrome.runtime.lastError.message);
@@ -233,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         initializeFixedValues();
-        updateSelectOptions(['roof_mat', 'roof_shape']);
+        updateSelectOptions(['roof_mat', 'roof_shape', 'const_material', 'mat']);
     }
 
     function handleSave() {
@@ -259,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 initializeFixedValues();
-                updateSelectOptions(['roof_mat', 'roof_shape']);
+                updateSelectOptions(['roof_mat', 'roof_shape', 'const_material', 'mat']);
                 console.log("Data loaded successfully!");
                 alert("Data loaded successfully!");
             }
@@ -274,6 +281,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         console.log("Form data being sent:", formData);
-        return {...formData, site: currentSite};
+        return { ...formData, site: currentSite };
     }
 });

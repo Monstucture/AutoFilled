@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ritz Auto Quote</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    
+
     <div class="input-group">
         <label for="site-selection">Select Site:</label>
         <select id="site-selection">
@@ -16,7 +18,7 @@
             <option value="ari">ARI</option>
         </select>
     </div>
-        
+
     <main>
         <form id="quote-form">
             <fieldset>
@@ -114,8 +116,8 @@
                 <div class="input-group">
                     <label for="roof_mat">Roof Material:</label>
                     <select id="roof_mat" name="roof_mat">
-                      <option value="">Select Roof Material</option>
-                      <!-- Options will be dynamically populated by JavaScript -->
+                        <option value="">Select Roof Material</option>
+                        <!-- Options will be dynamically populated by JavaScript -->
                     </select>
                 </div>
                 <div class="input-group">
@@ -136,7 +138,7 @@
                     <label for="purchase_date">Purchase Date:</label>
                     <input type="text" id="purchase_date" name="purchase_date">
                 </div>
-                
+
                 <!-- Hard code stuff -->
                 <div class="input-group">
                     <input type="text" id="foundation" name="foundation" readonly hidden>
@@ -155,6 +157,7 @@
                     <input type="text" id="waterCov" name="waterCov" readonly hidden>
 
                     <!-- sagesure hardcode -->
+                    <!-- TODO: Adding the hardcode variable -->
                     <input type="text" id="Laps" name="Laps" readonly hidden>
                     <div class="input-group" style="display: none;">
                         <select id="Co_app"></select>
@@ -178,4 +181,5 @@
     </main>
     <script src="script.js"></script>
 </body>
+
 </html>

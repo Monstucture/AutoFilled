@@ -51,7 +51,7 @@ const siteConfigurations = {
             option2: 'ContentPlaceHolderBody_QuoteBody_ddlAnyBreakdownCvg',
             waterCov: 'ContentPlaceHolderBody_QuoteBody_HasPlumbingLeakageCoverage',
         },
-        
+
     },
 
     'agents.sagesure.com': {
@@ -61,7 +61,7 @@ const siteConfigurations = {
             last_name: 'InsuredLastName',
             dob: 'Insured1BirthDate',
             personal_statues: 'InsuredMaritalStatus',
-            
+
             // Hard code Value
             dA: 'CoverageA',
             ddA: 'CoverageADisplay',
@@ -72,7 +72,7 @@ const siteConfigurations = {
             c1: 'MasonryVeneerPercentage',
             roof_mat: 'RoofCoveringType',
             roof_year: 'ConstructionYearRoof',
-            
+
 
             // Unique on Sagesure
             Ins_score: 'InsuranceScoreRangeEstimate',
@@ -85,7 +85,12 @@ const siteConfigurations = {
             x4: 'Trampoline'
 
         },
-        
+    },
+
+    'cypress.cogisi.com': {
+        elementMappings: {
+            // TODO
+        },
     }
 };
 
@@ -167,7 +172,7 @@ function selectRadioButton(name, value) {
 // Find an element by ID, name, or React Select container
 function findElement(elementId) {
     let element = document.getElementById(elementId) || document.getElementsByName(elementId)[0];
-    
+
     if (element) {
         return element;
     }
@@ -184,7 +189,7 @@ function findElement(elementId) {
 // Fill a field with the provided value
 function fillField(element, value, site, key) {
     console.log(`Attempting to fill ${key} with value: ${value}`);
-    
+
     const siteConfig = siteConfigurations[site];
     if (siteConfig && siteConfig.valueMappings) {
         const mappings = siteConfig.valueMappings[key];
